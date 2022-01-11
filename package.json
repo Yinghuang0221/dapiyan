@@ -1,0 +1,12 @@
+{
+  "name": "dapiyan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/littlibanana/dapiyan.git",
+  "author": "littlibanana <66011133+littlibanana@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cd frontend && yarn start",
+    "server": "cd backend && yarn server"
+  }
+}
