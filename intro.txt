@@ -1,3 +1,7 @@
 api key:AIzaSyCUc2QImWdlD3jlTmNmeHDF6_18xl_TNg8
 
 current:https://www.npmjs.com/package/@react-google-maps/api
+
+
+refer:http://chi15036-blog.logdown.com/posts/303408-google-map-javascript-api-use
+      https://stackoverflow.com/questions/66944396/can-i-use-google-places-with-react-google-maps-api
