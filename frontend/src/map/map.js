@@ -1,9 +1,9 @@
 import { React, useState } from "react";
-import Key from "../Key"; // ¤Þ¤J API key
+import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 
 // Map
-const SimpleMap = (props) => {
+const CafeMap = (props) => {
   const [mapApiLoaded, setMapApiLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState(null);
   const [mapApi, setMapApi] = useState(null);
@@ -11,9 +11,9 @@ const SimpleMap = (props) => {
   const [inputRadius, setInputRadius] = useState(1000);
 
   const [myPosition, setMyPosition] = useState({
-    lat: 25.04,
-    lng: 121.5,
-  });
+    lat: 25.2,
+    lng: 121.31,
+  }); // default is taipei station
 
   const apiHasLoaded = (map, maps) => {
     setMapInstance(map);
@@ -21,12 +21,12 @@ const SimpleMap = (props) => {
     setMapApiLoaded(true);
     getLocation();
     console.log("Complete loading!");
-    findCafeLocation();
   };
-  //©w¸q©@°ØÆUmarker
-  const CafeMarker = ({ icon, text }) => (
+
+  //define Cafemarker
+  const CafeMarker = ({ icon, text, name, id }) => (
     <div>
-      <button type="button" onClick={() => console.log("piyan")}>
+      <button type="button" onClick={() => getLocationDetail(id)}>
         <img
           style={{ height: "20px", width: "20px" }}
           src={icon}
@@ -45,7 +45,7 @@ const SimpleMap = (props) => {
       </div>
     </div>
   );
-  //©w¸q­Ó¤H¦ì¸mmarker
+  //define selfmarker
   const MyPositionMarker = ({ text }) => (
     <div style={{ width: "20px" }}>
       <img
@@ -55,21 +55,23 @@ const SimpleMap = (props) => {
       />
     </div>
   );
-  //²¾°Ê¦a¹Ï
+
+  //handling map
   const handleCenterChange = () => {
     if (mapApiLoaded) {
       setMyPosition({
-        // center.lat() »P center.lng() ·|¦^¶Ç¥¿¤¤¤ßªº¸g½n«×
+        //set position to center
         lat: mapInstance.center.lat(),
         lng: mapInstance.center.lng(),
       });
     }
   };
 
-  //¿é¤J¶ZÂ÷¥b®|
+  //set radius
   const handleChange = (e) => {
     setInputRadius(e.target.value);
   };
+
   //get current location
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -82,16 +84,15 @@ const SimpleMap = (props) => {
       });
     }
   };
-  // §ä©@°ØÆU
+  // find cafe
   const findCafeLocation = () => {
     if (mapApiLoaded) {
       setMyPosition({
-        // center.lat() »P center.lng() ·|¦^¶Ç¥¿¤¤¤ßªº¸g½n«×
+        //default position at center
         lat: mapInstance.center.lat(),
         lng: mapInstance.center.lng(),
       });
     }
-
     console.log(inputRadius);
     if (mapApiLoaded) {
       const service = new mapApi.places.PlacesService(mapInstance);
@@ -106,6 +107,38 @@ const SimpleMap = (props) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
           console.log(results);
           setPlaces(results);
+        }
+      });
+    }
+  };
+
+  const getLocationDetail = (place_id) => {
+    if (mapApiLoaded) {
+      const service = new mapApi.places.PlacesService(mapInstance);
+      const request = {
+        placeId: place_id,
+        fields: [
+          "name",
+          "rating",
+          "formatted_phone_number",
+          "formatted_address",
+          "opening_hours",
+          "photos",
+        ],
+      };
+
+      service.getDetails(request, (results, status) => {
+        if (status === mapApi.places.PlacesServiceStatus.OK) {
+          const isOpenNow = results.opening_hours.isOpen();
+          console.log(isOpenNow);
+
+          if (isOpenNow) {
+            console.log("æœ‰é–‹å•¦å¹¹");
+          }
+
+          console.log(results);
+          if (request.photos !== undefined)
+            console.log(results.photos[0].getUrl());
         }
       });
     }
@@ -159,15 +192,15 @@ const SimpleMap = (props) => {
         <GoogleMapReact
           bootstrapURLKeys={{
             key: Key,
-            libraries: ["places"], // ­n¦b³oÃä©ñ¤J§Ú­Ì­n¨Ï¥Îªº API
+            libraries: ["places"], // which API
           }}
           onChange={handleCenterChange}
           defaultCenter={props.center}
           defaultZoom={props.zoom}
           center={myPosition}
-          yesIWantToUseGoogleMapApiInternals // ³]©w¬° true
-          // layerTypes={["TrafficLayer", "TransitLayer"]} // ¥æ³qª¬ªp
-          onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)} // ¸ü¤J§¹¦¨«á°õ¦æ
+          yesIWantToUseGoogleMapApiInternals //true
+          // layerTypes={["TrafficLayer", "TransitLayer"]} // add layer
+          onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)} // map is current map, maps is Google Maps API
         >
           <MyPositionMarker
             lat={myPosition.lat}
@@ -184,6 +217,8 @@ const SimpleMap = (props) => {
               lng={item.geometry.location.lng()}
               text={item.name}
               placeId={item.place_id}
+              name={item.name}
+              id={item.place_id}
             />
           ))}
         </GoogleMapReact>
@@ -192,8 +227,8 @@ const SimpleMap = (props) => {
   );
 };
 
-// ¥Ñ©ó§ï¼g¦¨ functional component¡A¬G¥t¥~³]©w defaultProps
-SimpleMap.defaultProps = {
+//set props
+CafeMap.defaultProps = {
   center: { lat: 0, lng: 0 },
   zoom: 18,
 };
@@ -202,7 +237,7 @@ SimpleMap.defaultProps = {
 function App() {
   return (
     <div className="App">
-      <SimpleMap />
+      <CafeMap />
     </div>
   );
 }
