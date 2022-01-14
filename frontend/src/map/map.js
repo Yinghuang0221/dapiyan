@@ -15,7 +15,7 @@ const CafeMap = (props) => {
     name: "piyan",
     tele: "piyan",
     isOpen: false,
-    comments:[]
+
   });
   const [inputRadius, setInputRadius] = useState(1000);
 
@@ -83,7 +83,7 @@ const CafeMap = (props) => {
       <p>店名 : {name}</p>
       <p>電話 : {tele}</p>
       <p>是否營業:{isOpen}</p>
-      <div>{comments}</div>
+
       <form onSubmit={commentSubmit}>
         <label htmlFor='comment'> Write your comment here! </label>
         <br />
@@ -192,7 +192,7 @@ const CafeMap = (props) => {
               name: results.name,
               tele: results.formatted_phone_number,
               isOpen: results.opening_hours.open_now,
-              comments: comments
+
             });
           } else
             setinfoCardDetail({
@@ -300,6 +300,7 @@ const CafeMap = (props) => {
           url={infoCardDetail.url}
           name={infoCardDetail.name}
           tele={infoCardDetail.tele}
+
         />
       </div>
     </>
