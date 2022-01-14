@@ -8,6 +8,12 @@ const CafeMap = (props) => {
   const [mapInstance, setMapInstance] = useState(null);
   const [mapApi, setMapApi] = useState(null);
   const [places, setPlaces] = useState([]);
+  const [infoCardDetail, setinfoCardDetail] = useState({
+    url: "piyan",
+    name: "piyan",
+    tele: "piyan",
+    isOpen: false,
+  });
   const [inputRadius, setInputRadius] = useState(1000);
 
   const [myPosition, setMyPosition] = useState({
@@ -46,7 +52,7 @@ const CafeMap = (props) => {
     </div>
   );
   //define selfmarker
-  const MyPositionMarker = ({ text }) => (
+  const MyPositionMarker = () => (
     <div style={{ width: "20px" }}>
       <img
         src="https://pic.baike.soso.com/ugc/baikepic2/4950/cut-20210830191832-1142169327_jpg_703_469_43543.jpg/800"
@@ -55,7 +61,27 @@ const CafeMap = (props) => {
       />
     </div>
   );
-
+  //test of info card
+  const InfoCard = ({ url, name, tele, isOpen }) => (
+    <div
+      style={{
+        width: "400px",
+        height: "400px",
+        padding: "20px",
+        backgroundColor: "gray",
+        // border-radius :"5%"
+      }}
+    >
+      <img
+        style={{ height: "auto", width: "100%" }}
+        src={url}
+        alt="piyan"
+      ></img>
+      <p>店名 : {name}</p>
+      <p>電話 : {tele}</p>
+      <p>是否營業:{isOpen}</p>
+    </div>
+  );
   //handling map
   const handleCenterChange = () => {
     if (mapApiLoaded) {
@@ -111,7 +137,7 @@ const CafeMap = (props) => {
       });
     }
   };
-
+  //get detail when clicking button
   const getLocationDetail = (place_id) => {
     if (mapApiLoaded) {
       const service = new mapApi.places.PlacesService(mapInstance);
@@ -129,16 +155,32 @@ const CafeMap = (props) => {
 
       service.getDetails(request, (results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
-          const isOpenNow = results.opening_hours.isOpen();
-          console.log(isOpenNow);
+          // const isOpenNow = results.opening_hours.isOpen();
+          // console.log(isOpenNow);
 
-          if (isOpenNow) {
-            console.log("有開啦幹");
-          }
+          // if (isOpenNow) {
+          //   console.log("有開啦幹");
+          // }
 
           console.log(results);
-          if (request.photos !== undefined)
+          console.log(results.opening_hours.open_now);
+          console.log(results.opening_hours.isOpen());
+          if (results.photos !== undefined) {
+            console.log("having photos");
             console.log(results.photos[0].getUrl());
+            setinfoCardDetail({
+              url: results.photos[0].getUrl(),
+              name: results.name,
+              tele: results.formatted_phone_number,
+              isOpen: results.opening_hours.open_now,
+            });
+          } else
+            setinfoCardDetail({
+              url: "https://api.harpersbazaar.com.hk/var/site/storage/images/_aliases/img_640_w/celebrity/celebrity-life/about-takeshi-kaneshiro/01/1872949-2-chi-HK/01.jpg",
+              name: results.name,
+              tele: results.formatted_phone_number,
+              isOpen: results.opening_hours.open_now,
+            });
         }
       });
     }
@@ -222,6 +264,11 @@ const CafeMap = (props) => {
             />
           ))}
         </GoogleMapReact>
+        <InfoCard
+          url={infoCardDetail.url}
+          name={infoCardDetail.name}
+          tele={infoCardDetail.tele}
+        />
       </div>
     </>
   );
