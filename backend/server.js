@@ -3,8 +3,9 @@ import morgan from 'morgan'
 import router from './routes/router'
 import bodyParser from 'body-parser';
 import cors from 'cors'
-
-
+import mongoose from 'mongoose'
+import dotenv from 'dotenv-defaults'
+dotenv.config()
 
 
 const app = express()
@@ -17,6 +18,18 @@ app.use(morgan('dev'))
 app.get('/', async(req, res ,next)=> {
     res.send({message: "piyan is working"})
 })
+
+mongoose
+    .connect(
+        process.env.MONGO_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        }
+    )
+    .then((res) => {
+        console.log("mongo db connection created")
+    })
+
 
 app.use('/api', router)
 
