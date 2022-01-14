@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space } from "antd";
+import { Button, Space, Card } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 // Map
@@ -69,7 +69,7 @@ const CafeMap = (props) => {
     <div
       style={{
         width: "400px",
-        height: "400px",
+        height: "700px",
         padding: "20px",
         backgroundColor: "gray",
         // border-radius :"5%"
@@ -225,13 +225,19 @@ const CafeMap = (props) => {
   return (
     // Important! Always set the container height explicitly
     <>
-      <div>
+      <div className="piyan">
         <Space>
           <Button
             ghost
             type="primary"
             icon={<SearchOutlined />}
             onClick={findCafeLocation}
+            style={{
+              margin: "auto",
+              display: "flex",
+              height: "auto",
+              width: "100px",
+            }}
           >
             Find Cafe!
           </Button>
@@ -260,7 +266,7 @@ const CafeMap = (props) => {
       </div>
       <div
         style={{
-          height: "80vh",
+          height: "700px",
           width: "70%",
           display: "flex",
           justifyContent: "center",

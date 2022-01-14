@@ -5,7 +5,7 @@ import CafeMap from "./map/map";
 
 function App() {
   return (
-    <div>
+    <div style={{ display: "flex" }}>
       <Calender></Calender>
       <CafeMap />
     </div>
