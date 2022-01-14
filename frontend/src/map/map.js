@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import Key from "../key"; // API key
+import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 
 // Map
@@ -271,12 +271,12 @@ CafeMap.defaultProps = {
 };
 
 // App
-function App() {
-  return (
-    <div className="App">
-      <CafeMap />
-    </div>
-  );
-}
+// function App() {
+//   return (
+//     <div className="App">
+//       <CafeMap />
+//     </div>
+//   );
+// }
 
-export default App;
+export default CafeMap;

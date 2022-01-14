@@ -1,12 +1,14 @@
 import logo from "./logo.svg";
 import "./App.css";
 import Calender from "./calendar/Calendar";
+import CafeMap from "./map/Map";
 
 function App() {
   return (
-    
-  <Calender>
-  </Calender>
+    <div>
+      <Calender></Calender>
+      <CafeMap />
+    </div>
   );
 }
 
