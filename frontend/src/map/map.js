@@ -169,7 +169,7 @@ const CafeMap = (props) => {
         ],
       };
 
-      service.getDetails(request, (results, status) => {
+      service.getDetails(request, async(results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
           if (results.photos !== undefined) {
             console.log("having photos");
@@ -179,7 +179,7 @@ const CafeMap = (props) => {
             axios.post('/api/get-cafe-name', { cafeName })
 
             console.log('11')
-            const {data : comments} =  axios.get('/api/get-comments', {
+            const {data : comments} =  await axios.get('/api/get-comments', {
               params: {
                 name: cafeName,
               }
