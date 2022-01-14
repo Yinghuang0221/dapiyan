@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import Key from "../Key"; // API key
+import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 
 // Map
@@ -155,16 +155,6 @@ const CafeMap = (props) => {
 
       service.getDetails(request, (results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
-          // const isOpenNow = results.opening_hours.isOpen();
-          // console.log(isOpenNow);
-
-          // if (isOpenNow) {
-          //   console.log("有開啦幹");
-          // }
-
-          console.log(results);
-          console.log(results.opening_hours.open_now);
-          console.log(results.opening_hours.isOpen());
           if (results.photos !== undefined) {
             console.log("having photos");
             console.log(results.photos[0].getUrl());
