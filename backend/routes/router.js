@@ -1,5 +1,8 @@
 import express from 'express';
 import  mongoose  from 'mongoose';
+import Cafes from '../mongo/models/Cafes';
+import { SaveCafeName, updateCafeComment, searchComment } from '../mongo/mongo';
+
 
 const router = express.Router() 
 const { google } = require('googleapis')
@@ -46,6 +49,7 @@ router.post('/create-event', async(req, res, next) => {
     try{
         const {summary, description, location, startDateTime, endDateTime} =
             req.body
+        
         oauth2Client.setCredentials({access_token: ACCESS_TOKEN})
         const calendar = google.calendar('v3')
         const response = await calendar.events.insert({
@@ -76,12 +80,39 @@ router.post('/create-event', async(req, res, next) => {
 
 
 
-router.post('/get-cafe-information', async(req, res, next) => {
+router.post('/get-cafe-name', async(req, res, next) => {
     try{
-        const { startDateTime, endDateTime, location } = req.body
+        const { cafeName } = req.body
+
+        await SaveCafeName(cafeName)
     } catch(error) {
         next(error)
     }
+})
+
+router.post('/create-comment', async(req, res, next) => {
+    try{
+        const {cafeNameForComment, comment} = req.body
+        // console.log(comment)
+        // console.log(cafeNameForComment)
+
+        await updateCafeComment(cafeNameForComment, comment)
+    } catch(error) {
+
+    }
+})
+
+router.get('/get-comments', async(req, res, next) => {
+    const name = req.query.name
+
+    const target = await searchComment(name)
+    console.log(target)
+
+
+    res.send({comments: target})
+
+
+    
 })
 
 

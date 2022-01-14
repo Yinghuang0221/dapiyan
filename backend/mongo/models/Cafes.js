@@ -6,15 +6,15 @@ const Schema = mongoose.Schema;
 
 const CafeSchema = new Schema({
     
-    Name: String,
-    Description: String,
-    Rating: String,
+    
+    comments: Array,
+    name: String,
 
 })
 
-const Cafe = mongoose.model('Cafe', CafeSchema)
+const Cafes = mongoose.model('Cafes', CafeSchema)
 
-export default Cafe
+export default Cafes
 
 
 

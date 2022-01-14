@@ -19,16 +19,6 @@ app.get('/', async(req, res ,next)=> {
     res.send({message: "piyan is working"})
 })
 
-mongoose
-    .connect(
-        process.env.MONGO_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        }
-    )
-    .then((res) => {
-        console.log("mongo db connection created")
-    })
 
 
 app.use('/api', router)

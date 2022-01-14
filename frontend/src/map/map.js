@@ -1,6 +1,8 @@
 import { React, useState } from "react";
-import Key from "../Key"; // API key
+import Key from '../key'; // API key
 import GoogleMapReact from "google-map-react";
+import axios from '../api'
+
 
 // Map
 const CafeMap = (props) => {
@@ -80,6 +82,18 @@ const CafeMap = (props) => {
       <p>店名 : {name}</p>
       <p>電話 : {tele}</p>
       <p>是否營業:{isOpen}</p>
+      <form onSubmit={commentSubmit}>
+        <label htmlFor='comment'> Write your comment here! </label>
+        <br />
+        <input 
+          type='text' 
+          id='comment'
+          value={comment}
+          onChange={e => {setComment(e.target.value)}} 
+        />
+        <br />
+        <button type='submit'> 送出留言 </button>
+      </form>
     </div>
   );
   //handling map
@@ -158,6 +172,19 @@ const CafeMap = (props) => {
           if (results.photos !== undefined) {
             console.log("having photos");
             console.log(results.photos[0].getUrl());
+            const cafeName = results.name
+
+            axios.post('/api/get-cafe-name', { cafeName })
+
+            console.log('11')
+            const {data : {comments}} =  axios.get('/api/get-comments', {
+              params: {
+                name: cafeName,
+              }
+            })
+            console.log(comments)
+
+
             setinfoCardDetail({
               url: results.photos[0].getUrl(),
               name: results.name,
@@ -175,6 +202,17 @@ const CafeMap = (props) => {
       });
     }
   };
+
+  const [comment, setComment] = useState("")
+
+  const commentSubmit = (e) => {
+    e.preventDefault()
+    const cafeNameForComment = infoCardDetail.name
+    console.log(cafeNameForComment)
+    axios.post('/api/create-comment', { cafeNameForComment , comment })
+  };
+
+
 
   return (
     // Important! Always set the container height explicitly
