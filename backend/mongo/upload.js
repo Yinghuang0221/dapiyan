@@ -1,1 +1,1 @@
-import Cafe from './models/Cafes'
+import Cafe from "./models/Cafes";

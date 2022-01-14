@@ -1,8 +1,9 @@
 import { React, useState } from "react";
-import Key from '../key'; // API key
+import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
-import axios from '../api'
-
+import axios from "../api";
+import { Button, Space } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 // Map
 const CafeMap = (props) => {
@@ -15,10 +16,9 @@ const CafeMap = (props) => {
     name: "piyan",
     tele: "piyan",
     isOpen: false,
-
   });
+  const [comment, setComment] = useState("");
   const [inputRadius, setInputRadius] = useState(1000);
-
   const [myPosition, setMyPosition] = useState({
     lat: 25.2,
     lng: 121.31,
@@ -65,7 +65,7 @@ const CafeMap = (props) => {
     </div>
   );
   //test of info card
-  const InfoCard = ({ url, name, tele, isOpen, comments }) => (
+  const InfoCard = ({ url, name, tele, isOpen, comment, onChange }) => (
     <div
       style={{
         width: "400px",
@@ -83,21 +83,23 @@ const CafeMap = (props) => {
       <p>店名 : {name}</p>
       <p>電話 : {tele}</p>
       <p>是否營業:{isOpen}</p>
-
-      <form onSubmit={commentSubmit}>
-        <label htmlFor='comment'> Write your comment here! </label>
-        <br />
-        <input 
-          type='text' 
-          id='comment'
-          value={comment}
-          onChange={e => {setComment(e.target.value)}} 
-        />
-        <br />
-        <button type='submit'> 送出留言 </button>
-      </form>
+      <div>
+        <form onSubmit={commentSubmit}>
+          <label htmlFor="comment"> Write your comment here! </label>
+          <br />
+          <input
+            type="text"
+            id="comment"
+            value={comment}
+            onChange={onChange}
+          ></input>
+          <br />
+          <button type="submit"> 送出留言 </button>
+        </form>
+      </div>
     </div>
   );
+
   //handling map
   const handleCenterChange = () => {
     if (mapApiLoaded) {
@@ -110,8 +112,14 @@ const CafeMap = (props) => {
   };
 
   //set radius
-  const handleChange = (e) => {
+  const handleRadiusChange = (e) => {
     setInputRadius(e.target.value);
+    console.log(e.target.value);
+  };
+  //set comment
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+    console.log(e.target.value);
   };
 
   //get current location
@@ -169,30 +177,28 @@ const CafeMap = (props) => {
         ],
       };
 
-      service.getDetails(request, async(results, status) => {
+      service.getDetails(request, async (results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
           if (results.photos !== undefined) {
             console.log("having photos");
             console.log(results.photos[0].getUrl());
-            const cafeName = results.name
+            const cafeName = results.name;
 
-            axios.post('/api/get-cafe-name', { cafeName })
+            axios.post("/api/get-cafe-name", { cafeName });
 
-            console.log('11')
-            const {data : comments} =  await axios.get('/api/get-comments', {
+            console.log("11");
+            const { data: comments } = await axios.get("/api/get-comments", {
               params: {
                 name: cafeName,
-              }
-            })
-            console.log(comments)
-
+              },
+            });
+            console.log(comments);
 
             setinfoCardDetail({
               url: results.photos[0].getUrl(),
               name: results.name,
               tele: results.formatted_phone_number,
               isOpen: results.opening_hours.open_now,
-
             });
           } else
             setinfoCardDetail({
@@ -200,38 +206,36 @@ const CafeMap = (props) => {
               name: results.name,
               tele: results.formatted_phone_number,
               isOpen: results.opening_hours.open_now,
-              
             });
         }
       });
     }
   };
 
-  const [comment, setComment] = useState("")
-
   const commentSubmit = (e) => {
-    e.preventDefault()
-    const cafeNameForComment = infoCardDetail.name
-    console.log(cafeNameForComment)
-    axios.post('/api/create-comment', { cafeNameForComment , comment })
+    e.preventDefault();
+    // setComment(e.target.value);
+    // console.log(e.target.value);
+
+    const cafeNameForComment = infoCardDetail.name;
+    console.log(cafeNameForComment);
+    axios.post("/api/create-comment", { cafeNameForComment, comment });
   };
-
-
 
   return (
     // Important! Always set the container height explicitly
     <>
       <div>
-        <input
-          type="button"
-          style={{
-            width: "40px",
-            display: "flex",
-            margin: "auto",
-          }}
-          value="Find Cafe!"
-          onClick={findCafeLocation}
-        />
+        <Space>
+          <Button
+            ghost
+            type="primary"
+            icon={<SearchOutlined />}
+            onClick={findCafeLocation}
+          >
+            Find Cafe!
+          </Button>
+        </Space>
         <div>
           <p
             style={{
@@ -250,7 +254,7 @@ const CafeMap = (props) => {
               margin: "auto",
             }}
             value={inputRadius}
-            onChange={handleChange}
+            onChange={handleRadiusChange}
           ></input>
         </div>
       </div>
@@ -300,7 +304,8 @@ const CafeMap = (props) => {
           url={infoCardDetail.url}
           name={infoCardDetail.name}
           tele={infoCardDetail.tele}
-
+          comment={comment}
+          onChange={handleCommentChange}
         />
       </div>
     </>
@@ -312,14 +317,5 @@ CafeMap.defaultProps = {
   center: { lat: 0, lng: 0 },
   zoom: 18,
 };
-
-// App
-// function App() {
-//   return (
-//     <div className="App">
-//       <CafeMap />
-//     </div>
-//   );
-// }
 
 export default CafeMap;

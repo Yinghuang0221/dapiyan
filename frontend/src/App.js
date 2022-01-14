@@ -1,7 +1,7 @@
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 import Calender from "./calendar/Calendar";
-import CafeMap from './map/map'
+import CafeMap from "./map/map";
 
 function App() {
   return (
