@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
-import axios from "../api";
+import axios from "../homepage/api";
 import {
   Button,
   Space,
@@ -123,7 +123,7 @@ const CafeMap = (props) => {
             type="text"
             id="comment"
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={(e)=>handleCommentChange(e)}
             autoFocus
           ></input>
           <br />
@@ -136,6 +136,9 @@ const CafeMap = (props) => {
     </div>
   );
 
+  const handleCommentChange = (e) => {
+    setComment(e.target.value)
+  }
   //handling map
   const handleCenterChange = () => {
     if (mapApiLoaded) {
