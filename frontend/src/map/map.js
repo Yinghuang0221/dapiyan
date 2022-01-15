@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space } from "antd";
+import { Button, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 // Map
@@ -114,11 +114,6 @@ const CafeMap = (props) => {
     }
   };
 
-  //set radius
-  const handleRadiusChange = (e) => {
-    setInputRadius(e.target.value);
-    console.log(e.target.value);
-  };
   //set comment
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -139,29 +134,33 @@ const CafeMap = (props) => {
   };
   // find cafe
   const findCafeLocation = () => {
-    if (mapApiLoaded) {
-      setMyPosition({
-        //default position at center
-        lat: mapInstance.center.lat(),
-        lng: mapInstance.center.lng(),
-      });
-    }
-    console.log(inputRadius);
-    if (mapApiLoaded) {
-      const service = new mapApi.places.PlacesService(mapInstance);
+    if (isNaN(inputRadius) === false) {
+      if (mapApiLoaded) {
+        setMyPosition({
+          //default position at center
+          lat: mapInstance.center.lat(),
+          lng: mapInstance.center.lng(),
+        });
+      }
+      console.log(inputRadius);
+      if (mapApiLoaded) {
+        const service = new mapApi.places.PlacesService(mapInstance);
 
-      const request = {
-        location: myPosition,
-        radius: inputRadius,
-        type: ["cafe"],
-      };
+        const request = {
+          location: myPosition,
+          radius: inputRadius,
+          type: ["cafe"],
+        };
 
-      service.nearbySearch(request, (results, status) => {
-        if (status === mapApi.places.PlacesServiceStatus.OK) {
-          console.log(results);
-          setPlaces(results);
-        }
-      });
+        service.nearbySearch(request, (results, status) => {
+          if (status === mapApi.places.PlacesServiceStatus.OK) {
+            console.log(results);
+            setPlaces(results);
+          }
+        });
+      }
+    } else {
+      console.log("屁眼");
     }
   };
   //get detail when clicking button
@@ -212,7 +211,8 @@ const CafeMap = (props) => {
             tmpinfo.formatted_address = results.formatted_address;
           }
           if (results.opening_hours !== undefined) {
-            if (results.opening_hours.isOpen === true)
+            // console.log(results.opening_hours.isOpen());
+            if (results.opening_hours.open_now === true)
               tmpinfo.isOpen = "營業中";
             else tmpinfo.isOpen = "休息中";
           }
@@ -264,25 +264,11 @@ const CafeMap = (props) => {
           </Button>
         </Space>
         <div>
-          <p
-            style={{
-              width: "100px",
-              display: "flex",
-              margin: "auto",
-            }}
-          >
-            input distance
-          </p>
-          <input
-            type="text"
-            style={{
-              width: "40px",
-              display: "flex",
-              margin: "auto",
-            }}
+          <Input
             value={inputRadius}
-            onChange={handleRadiusChange}
-          ></input>
+            placeholder="請輸入距離"
+            onChange={(e) => setInputRadius(e.target.value)}
+          ></Input>
         </div>
       </div>
       <div
