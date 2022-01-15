@@ -103,12 +103,18 @@ const CafeMap = (props) => {
         <li>{comment_2}</li>
       </ul>
       <div>
-        <Form onSubmit={commentSubmit}>
+        <Form onFinish={commentSubmit} id="commentForm">
           <label htmlFor="comment"> Write your comment here! </label>
           <br />
-          <CommentInput />
+          <input
+            type="text"
+            id="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            autoFocus
+          ></input>
           <br />
-          <button type="submit"> 送出留言 </button>
+          <Button form="commentForm" key="submit" htmlType="submit"> 送出留言 </Button>
         </Form>
       </div>
     </div>
@@ -269,7 +275,8 @@ const CafeMap = (props) => {
   };
 
   const commentSubmit = async (e) => {
-    e.preventDefault();
+    console.log("送出留言屁眼")
+    // e.preventDefault();
     // setComment(e.target.value);
     // console.log(e.target.value);
 
