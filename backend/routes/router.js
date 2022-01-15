@@ -75,6 +75,8 @@ router.post("/get-cafe-name", async (req, res, next) => {
     const { cafeName } = req.body;
     // console.log(cafeName)
     await SaveCafeName(cafeName);
+    const response = "Cafe saved."
+    res.send(response)
   } catch (error) {
     next(error);
   }
