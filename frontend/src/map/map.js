@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import Key from "../Key"; // API key
+import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
 import { Button, Space, Input, message } from "antd";
