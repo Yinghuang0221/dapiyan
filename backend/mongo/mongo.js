@@ -59,7 +59,7 @@ const searchComment = async (name) => {
     } catch (error) {
       // console.log(error);
     }
-  }
+  } 
 };
 
 export { SaveCafeName, updateCafeComment, searchComment };

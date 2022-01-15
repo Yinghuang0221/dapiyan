@@ -264,7 +264,7 @@ const CafeMap = (props) => {
           const comment1 = comments.comments[0];
           const comment2 = comments.comments[1];
 
-          // console.log(comment1)
+          console.log(comments)
 
           if (comment1 === null) {
             setinfoCardDetail({
