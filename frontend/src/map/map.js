@@ -39,7 +39,6 @@ const CafeMap = (props) => {
     lng: 121.31,
   }); // default is taipei station
 
-
   const apiHasLoaded = (map, maps) => {
     setMapInstance(map);
     setMapApi(maps);
@@ -90,6 +89,7 @@ const CafeMap = (props) => {
     isOpen,
     comment_1,
     comment_2,
+    comment_3,
   }) => (
     <div
       style={{
@@ -111,8 +111,9 @@ const CafeMap = (props) => {
       <p>{isOpen}</p>
       <p>最新評論 : </p>
       <ul>
-        <li>{comment_1}</li>
-        <li>{comment_2}</li>
+        <p>{comment_1}</p>
+        <p>{comment_2}</p>
+        <p>{comment_3}</p>
       </ul>
       <div>
         <Form onFinish={commentSubmit} id="commentForm">
@@ -134,8 +135,6 @@ const CafeMap = (props) => {
       </div>
     </div>
   );
-
-
 
   //handling map
   const handleCenterChange = () => {
@@ -242,7 +241,6 @@ const CafeMap = (props) => {
             tmpinfo.url = results.photos[0].getUrl();
           }
 
-
           const cafeName = tmpinfo.name;
           await axios
             .post("/api/get-cafe-name", { cafeName })
@@ -263,8 +261,9 @@ const CafeMap = (props) => {
 
           const comment1 = comments.comments[0];
           const comment2 = comments.comments[1];
+          const comment3 = comments.comments[2];
 
-          console.log(comments)
+          console.log(comments);
 
           if (comment1 === null) {
             setinfoCardDetail({
@@ -276,9 +275,9 @@ const CafeMap = (props) => {
               url: tmpinfo.url,
               comment_1: "現在無留言",
               comment_2: "",
+              comment_3: "",
             });
-          }
-          else {
+          } else {
             setinfoCardDetail({
               name: tmpinfo.name,
               rating: tmpinfo.rating,
@@ -288,18 +287,14 @@ const CafeMap = (props) => {
               url: tmpinfo.url,
               comment_1: comment1,
               comment_2: comment2,
+              comment_3: comment3,
             });
           }
           // console.log(tmpinfo);
-
         }
       });
     }
   };
-
-
-
-
 
   const commentSubmit = async (e) => {
     console.log("送出留言屁眼");
@@ -309,25 +304,30 @@ const CafeMap = (props) => {
 
     const cafeNameForComment = infoCardDetail.name;
     // console.log(cafeNameForComment);
-    await axios.post("/api/create-comment", { cafeNameForComment, comment })
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(error)
-    });
+    await axios
+      .post("/api/create-comment", { cafeNameForComment, comment })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-    const cafeName = infoCardDetail.name
+    const cafeName = infoCardDetail.name;
     const { data: comments } = await axios.get("/api/get-comments", {
       params: {
         name: cafeName,
       },
     });
-    console.log(cafeName)
-    console.log(comments)
+    console.log(cafeName);
+    console.log(comments);
 
-    setinfoCardDetail({...infoCardDetail,comment_1:comments.comments[0]})
-    
+    setinfoCardDetail({
+      ...infoCardDetail,
+      comment_1: comments.comments[0],
+      comment_2: comments.comments[1],
+      comment_3: comments.comments[2],
+    });
   };
 
   const onClick = ({ key }) => {
@@ -405,8 +405,8 @@ const CafeMap = (props) => {
           isOpen={infoCardDetail.isOpen}
           comment_1={infoCardDetail.comment_1}
           comment_2={infoCardDetail.comment_2}
+          comment_3={infoCardDetail.comment_3}
         />
-
       </div>
     </>
   );
