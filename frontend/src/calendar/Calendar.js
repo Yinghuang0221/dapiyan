@@ -86,7 +86,7 @@ const GoogleCalender = (cafeName) => {
           />
           <br />
 
-          <Button type="submit"> 加入到行事曆 </Button>
+          <button type="submit"> 加入到行事曆 </button>
         </form>
       </div>
     </div>
