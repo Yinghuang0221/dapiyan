@@ -287,38 +287,41 @@ const CafeMap = (props) => {
 
   const commentSubmit = async (e) => {
     console.log("送出留言屁眼");
-    // e.preventDefault();
-    // setComment(e.target.value);
-    // console.log(e.target.value) ;
+    if (comment === "") {
+      message.warn("請輸入評論");
+    } else {
+      const cafeNameForComment = infoCardDetail.name;
+      // console.log(cafeNameForComment);
+      await axios
+        .post("/api/create-comment", { cafeNameForComment, comment })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-    const cafeNameForComment = infoCardDetail.name;
-    // console.log(cafeNameForComment);
-    await axios
-      .post("/api/create-comment", { cafeNameForComment, comment })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
+      const cafeName = infoCardDetail.name;
+      const { data: comments } = await axios.get("/api/get-comments", {
+        params: {
+          name: cafeName,
+        },
       });
+      console.log(cafeName);
+      console.log(comments);
 
-    const cafeName = infoCardDetail.name;
-    const { data: comments } = await axios.get("/api/get-comments", {
-      params: {
-        name: cafeName,
-      },
-    });
-    console.log(cafeName);
-    console.log(comments);
-
-    setinfoCardDetail({
-      ...infoCardDetail,
-      comment_1: comments.comments[0],
-      comment_2: comments.comments[1],
-      comment_3: comments.comments[2],
-    });
+      setinfoCardDetail({
+        ...infoCardDetail,
+        comment_1: comments.comments[0],
+        comment_2: comments.comments[1],
+        comment_3: comments.comments[2],
+      });
+      setComment("");
+      message.success("評論成功");
+    }
   };
 
+  //choose distan
   const onClick = ({ key }) => {
     setInputRadius(key);
     findCafeLocation();

@@ -37,7 +37,7 @@ const GoogleCalender = (cafeName) => {
           setDescription("");
           setStartDateTime("");
           setEndDateTime("");
-          message.isuccessnfo("成功加入行事曆");
+          message.success("成功加入行事曆");
         })
         .catch((error) => {
           console.log(error.message);
