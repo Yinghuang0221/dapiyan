@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Card } from "antd";
+import { Button, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 // Map
@@ -12,10 +12,12 @@ const CafeMap = (props) => {
   const [mapApi, setMapApi] = useState(null);
   const [places, setPlaces] = useState([]);
   const [infoCardDetail, setinfoCardDetail] = useState({
-    url: "piyan",
     name: "piyan",
+    rating: "piyan",
     tele: "piyan",
+    address: "piyan",
     isOpen: false,
+    url: "piyan",
   });
   const [comment, setComment] = useState("");
   const [inputRadius, setInputRadius] = useState(1000);
@@ -65,7 +67,7 @@ const CafeMap = (props) => {
     </div>
   );
   //test of info card
-  const InfoCard = ({ url, name, tele, isOpen, comment, onChange }) => (
+  const InfoCard = ({ url, name, rating, tele, isOpen, comment, onChange }) => (
     <div
       style={{
         width: "400px",
@@ -82,7 +84,8 @@ const CafeMap = (props) => {
       ></img>
       <p>店名 : {name}</p>
       <p>電話 : {tele}</p>
-      <p>是否營業:{isOpen}</p>
+      <p>Google評價 : {rating} 顆星</p>
+      <p>{isOpen}</p>
       <div>
         <form onSubmit={commentSubmit}>
           <label htmlFor="comment"> Write your comment here! </label>
@@ -179,34 +182,52 @@ const CafeMap = (props) => {
 
       service.getDetails(request, async (results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
+          let tmpinfo = {
+            name: "No name",
+            rating: "No rating",
+            formatted_phone_number: "No phone number",
+            formatted_address: "No address",
+            isOpen: "No open info",
+            photos: "No photos",
+          };
+          const cafeName = results.name;
+          axios.post("/api/get-cafe-name", { cafeName });
+          console.log(results);
+          // having bug here
+          // const { data: comments } = await axios.get("/api/get-comments", {
+          //   params: {
+          //     name: cafeName,
+          //   },
+          // });
+          if (results.name !== undefined) {
+            tmpinfo.name = results.name;
+          }
+          if (results.rating !== undefined) {
+            tmpinfo.rating = results.rating;
+          }
+          if (results.formatted_phone_number !== undefined) {
+            tmpinfo.formatted_phone_number = results.formatted_phone_number;
+          }
+          if (results.formatted_address !== undefined) {
+            tmpinfo.formatted_address = results.formatted_address;
+          }
+          if (results.opening_hours !== undefined) {
+            if (results.opening_hours.isOpen === true)
+              tmpinfo.isOpen = "營業中";
+            else tmpinfo.isOpen = "休息中";
+          }
           if (results.photos !== undefined) {
-            console.log("having photos");
-            console.log(results.photos[0].getUrl());
-            const cafeName = results.name;
-
-            axios.post("/api/get-cafe-name", { cafeName });
-
-            console.log("11");
-            const { data: comments } = await axios.get("/api/get-comments", {
-              params: {
-                name: cafeName,
-              },
-            });
-            console.log(comments);
-
-            setinfoCardDetail({
-              url: results.photos[0].getUrl(),
-              name: results.name,
-              tele: results.formatted_phone_number,
-              isOpen: results.opening_hours.open_now,
-            });
-          } else
-            setinfoCardDetail({
-              url: "https://api.harpersbazaar.com.hk/var/site/storage/images/_aliases/img_640_w/celebrity/celebrity-life/about-takeshi-kaneshiro/01/1872949-2-chi-HK/01.jpg",
-              name: results.name,
-              tele: results.formatted_phone_number,
-              isOpen: results.opening_hours.open_now,
-            });
+            tmpinfo.url = results.photos[0].getUrl();
+          }
+          // console.log(tmpinfo);
+          setinfoCardDetail({
+            name: tmpinfo.name,
+            rating: tmpinfo.rating,
+            tele: tmpinfo.formatted_phone_number,
+            address: tmpinfo.formatted_address,
+            isOpen: tmpinfo.isOpen,
+            url: tmpinfo.url,
+          });
         }
       });
     }
@@ -309,7 +330,10 @@ const CafeMap = (props) => {
         <InfoCard
           url={infoCardDetail.url}
           name={infoCardDetail.name}
+          rating={infoCardDetail.rating}
           tele={infoCardDetail.tele}
+          address={infoCardDetail.address}
+          isOpen={infoCardDetail.isOpen}
           comment={comment}
           onChange={handleCommentChange}
         />
