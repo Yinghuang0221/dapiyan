@@ -2,8 +2,7 @@ import { React, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Input, message, Calendar } from 'antd';
-import { SearchOutlined } from "@ant-design/icons";
+import { Button, Space, Input, Form, message, Card } from "antd";
 import GoogleCalender from "../calendar/Calendar";
 
 // Map
@@ -16,11 +15,11 @@ const CafeMap = (props) => {
     name: "piyan",
     rating: "piyan",
     tele: "piyan",
-    address: "piyan", 
+    address: "piyan",
     isOpen: false,
     url: "piyan",
-    comment_1:"目前無評論",
-    comment_2:"",
+    comment_1: "目前無評論",
+    comment_2: "",
   });
   const [comment, setComment] = useState("");
   const [inputRadius, setInputRadius] = useState(1000);
@@ -47,16 +46,17 @@ const CafeMap = (props) => {
           alt={"piyan"}
         />
       </button>
-      <div
+      <Card
+        size="small"
         style={{
-          height: "auto",
-          width: "50px",
+          width: "150px",
           backgroundColor: "gray",
           borderRadius: "5px",
+          fontSize: "10",
         }}
       >
         {text}
-      </div>
+      </Card>
     </div>
   );
   //define selfmarker
@@ -70,11 +70,19 @@ const CafeMap = (props) => {
     </div>
   );
   //test of info card
-  const InfoCard = ({ url, name, rating, tele, isOpen, comment_1, comment_2 }) => (
+  const InfoCard = ({
+    url,
+    name,
+    rating,
+    tele,
+    isOpen,
+    comment_1,
+    comment_2,
+  }) => (
     <div
       style={{
         width: "400px",
-        height: "700px",
+        height: "600px",
         padding: "20px",
         backgroundColor: "gray",
         // border-radius :"5%"
@@ -89,19 +97,19 @@ const CafeMap = (props) => {
       <p>電話 : {tele}</p>
       <p>Google評價 : {rating} 顆星</p>
       <p>{isOpen}</p>
-      <p>最新評論：</p>
+      <p>最新評論 : </p>
       <ul>
         <li>{comment_1}</li>
         <li>{comment_2}</li>
       </ul>
       <div>
-        <form onSubmit={commentSubmit}>
+        <Form onSubmit={commentSubmit}>
           <label htmlFor="comment"> Write your comment here! </label>
           <br />
           <CommentInput />
           <br />
           <button type="submit"> 送出留言 </button>
-        </form>
+        </Form>
       </div>
     </div>
   );
@@ -117,21 +125,18 @@ const CafeMap = (props) => {
     }
   };
 
-
-
-  const CommentInput = ()=> (
+  const CommentInput = () => (
     <div>
-    <input
-    type="text"
-    id="comment"
-    value={comment}
-    onChange={(e) => setComment(e.target.value)}
-    autoFocus
-    ></input>
+      <input
+        type="text"
+        id="comment"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        autoFocus
+      ></input>
     </div>
-    )
+  );
   //set comment
-
 
   //get current location
   const getLocation = () => {
@@ -189,10 +194,10 @@ const CafeMap = (props) => {
           "formatted_address",
           "opening_hours",
           "photos",
-        ], 
+        ],
       };
 
-      service.getDetails(request, async(results, status) => {
+      service.getDetails(request, async (results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
           let tmpinfo = {
             name: "No name",
@@ -226,17 +231,18 @@ const CafeMap = (props) => {
           }
           const cafeName = tmpinfo.name;
           axios.post("/api/get-cafe-name", { cafeName });
-          // console.log(results);
+          console.log(results);
           // // having bug here
           const { data: comments } = await axios.get("/api/get-comments", {
             params: {
               name: cafeName,
             },
           });
-          
-          const comment1 = comments.comments[0]
-          const comment2 = comments.comments[1]
-          
+          console.log("屁眼");
+
+          const comment1 = comments.comments[0];
+          const comment2 = comments.comments[1];
+
           // console.log(comment1)
 
           // console.log(tmpinfo);
@@ -255,7 +261,7 @@ const CafeMap = (props) => {
     }
   };
 
-  const commentSubmit = async(e) => {
+  const commentSubmit = async (e) => {
     e.preventDefault();
     // setComment(e.target.value);
     // console.log(e.target.value);
@@ -268,39 +274,44 @@ const CafeMap = (props) => {
   return (
     // Important! Always set the container height explicitly
     <>
-      <GoogleCalender cafeName = {infoCardDetail.name} />
-      <div className="piyan">
-        <Space>
-          <Button
-            type="primary"
-            onClick={findCafeLocation}
+      <header className="piyan">
+        <Space></Space>
+        <Button
+          type="primary"
+          onClick={findCafeLocation}
+          style={{
+            margin: "auto",
+            display: "flex",
+            height: "auto",
+            width: "100px",
+          }}
+        >
+          Find Cafe!
+        </Button>
+        <div>
+          <Input
             style={{
               margin: "auto",
               display: "flex",
               height: "auto",
               width: "100px",
             }}
-          >
-            Find Cafe!
-          </Button>
-        </Space>
-        <div>
-          <Input
             value={inputRadius}
             placeholder="請輸入距離"
             onChange={(e) => setInputRadius(e.target.value)}
           ></Input>
         </div>
-      </div>
+      </header>
       <div
         style={{
-          height: "700px",
+          height: "600px",
           width: "70%",
           display: "flex",
           justifyContent: "center",
           margin: "auto",
         }}
       >
+        <GoogleCalender cafeName={infoCardDetail.name} />
         <GoogleMapReact
           bootstrapURLKeys={{
             key: Key,
@@ -334,6 +345,7 @@ const CafeMap = (props) => {
             />
           ))}
         </GoogleMapReact>
+
         <InfoCard
           url={infoCardDetail.url}
           name={infoCardDetail.name}
@@ -343,10 +355,7 @@ const CafeMap = (props) => {
           isOpen={infoCardDetail.isOpen}
           comment_1={infoCardDetail.comment_1}
           comment_2={infoCardDetail.comment_2}
-        /> 
-
-
-
+        />
       </div>
     </>
   );
