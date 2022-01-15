@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "../homepage/api";
+import axios from "../api";
 import { useState } from "react";
 import { Button } from "antd";
 

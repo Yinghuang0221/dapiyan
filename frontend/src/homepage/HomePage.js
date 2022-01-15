@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleLogin } from "react-google-login";
-import axios from "./api";
+import axios from "../api";
 import { useState } from "react";
 import Background from '../coffee.jpg'
 import {Layout} from 'antd'
