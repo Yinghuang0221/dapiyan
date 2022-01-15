@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
@@ -38,6 +38,7 @@ const CafeMap = (props) => {
     lat: 25.2,
     lng: 121.31,
   }); // default is taipei station
+
 
   const apiHasLoaded = (map, maps) => {
     setMapInstance(map);
@@ -133,6 +134,8 @@ const CafeMap = (props) => {
       </div>
     </div>
   );
+
+
 
   //handling map
   const handleCenterChange = () => {
@@ -238,6 +241,8 @@ const CafeMap = (props) => {
           if (results.photos !== undefined) {
             tmpinfo.url = results.photos[0].getUrl();
           }
+
+
           const cafeName = tmpinfo.name;
           await axios
             .post("/api/get-cafe-name", { cafeName })
@@ -255,38 +260,74 @@ const CafeMap = (props) => {
               name: cafeName,
             },
           });
-          console.log("屁眼");
-          console.log(comments);
+
           const comment1 = comments.comments[0];
           const comment2 = comments.comments[1];
 
-          console.log(comment1);
+          // console.log(comment1)
 
+          if (comment1 === null) {
+            setinfoCardDetail({
+              name: tmpinfo.name,
+              rating: tmpinfo.rating,
+              tele: tmpinfo.formatted_phone_number,
+              address: tmpinfo.formatted_address,
+              isOpen: tmpinfo.isOpen,
+              url: tmpinfo.url,
+              comment_1: "現在無留言",
+              comment_2: "",
+            });
+          }
+          else {
+            setinfoCardDetail({
+              name: tmpinfo.name,
+              rating: tmpinfo.rating,
+              tele: tmpinfo.formatted_phone_number,
+              address: tmpinfo.formatted_address,
+              isOpen: tmpinfo.isOpen,
+              url: tmpinfo.url,
+              comment_1: comment1,
+              comment_2: comment2,
+            });
+          }
           // console.log(tmpinfo);
-          setinfoCardDetail({
-            name: tmpinfo.name,
-            rating: tmpinfo.rating,
-            tele: tmpinfo.formatted_phone_number,
-            address: tmpinfo.formatted_address,
-            isOpen: tmpinfo.isOpen,
-            url: tmpinfo.url,
-            comment_1: comment1,
-            comment_2: comment2,
-          });
+
         }
       });
     }
   };
 
+
+
+
+
   const commentSubmit = async (e) => {
     console.log("送出留言屁眼");
     // e.preventDefault();
     // setComment(e.target.value);
-    // console.log(e.target.value);
+    // console.log(e.target.value) ;
 
     const cafeNameForComment = infoCardDetail.name;
     // console.log(cafeNameForComment);
-    await axios.post("/api/create-comment", { cafeNameForComment, comment });
+    await axios.post("/api/create-comment", { cafeNameForComment, comment })
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+
+    const cafeName = infoCardDetail.name
+    const { data: comments } = await axios.get("/api/get-comments", {
+      params: {
+        name: cafeName,
+      },
+    });
+    console.log(cafeName)
+    console.log(comments)
+
+    setinfoCardDetail({...infoCardDetail,comment_1:comments.comments[0]})
+    
   };
 
   const onClick = ({ key }) => {
@@ -365,6 +406,7 @@ const CafeMap = (props) => {
           comment_1={infoCardDetail.comment_1}
           comment_2={infoCardDetail.comment_2}
         />
+
       </div>
     </>
   );
