@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import Key from "../Key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Input } from "antd";
+import { Button, Space, Input, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 // Map
@@ -160,7 +160,7 @@ const CafeMap = (props) => {
         });
       }
     } else {
-      console.log("屁眼");
+      message.info("請輸入數字");
     }
   };
   //get detail when clicking button
@@ -249,9 +249,7 @@ const CafeMap = (props) => {
       <div className="piyan">
         <Space>
           <Button
-            ghost
             type="primary"
-            icon={<SearchOutlined />}
             onClick={findCafeLocation}
             style={{
               margin: "auto",
