@@ -3,6 +3,7 @@
 .App {
   text-align: center;
   font-family: 'Noto Sans TC', sans-serif;
+  
 }
 
 .App-logo {
@@ -17,7 +18,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #8c9dc0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -40,8 +41,31 @@
   }
 }
 
-.piyan{
-  /* display: flex; */
+.mapHeader{
+  text-align:left;
+  display: flex;
+  flex-direction: column;
+  font-size: x-large;
+  color: #ffffff;
   padding: 30px;
   background: #404746
+}
+.cafePictureContainer{
+  margin: auto;
+  height: 200px;
+  width: 300px;
+  padding:5px;
+  position: relative;
+}
+.cafePicture{
+  max-height: 100%;  
+   max-width: 100%; 
+   width: auto;
+   height: auto;
+   position: absolute; 
+   top: 0;  
+   bottom: 0;  
+   left: 0;  
+   right: 0;
+   margin: auto;
 }

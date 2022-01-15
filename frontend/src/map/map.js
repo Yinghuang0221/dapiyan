@@ -11,8 +11,10 @@ import {
   Card,
   Menu,
   Dropdown,
+  List,
+  Typography,
+  Divider,
 } from "antd";
-import { DownOutlined } from "@ant-design/icons";
 
 import GoogleCalender from "../calendar/Calendar";
 
@@ -30,9 +32,11 @@ const CafeMap = (props) => {
     isOpen: false,
     url: "piyan",
     comment_1: "目前無評論",
-    comment_2: "",
+    comment_2: "目前無評論",
+    comment_3: "目前無評論",
   });
   const [comment, setComment] = useState("");
+  const [start, setStart] = useState(false);
   const [inputRadius, setInputRadius] = useState(1000);
   const [myPosition, setMyPosition] = useState({
     lat: 25.2,
@@ -57,17 +61,6 @@ const CafeMap = (props) => {
           alt={"piyan"}
         />
       </button>
-      <Card
-        size="small"
-        style={{
-          width: "150px",
-          backgroundColor: "gray",
-          borderRadius: "5px",
-          fontSize: "10",
-        }}
-      >
-        {text}
-      </Card>
     </div>
   );
   //define selfmarker
@@ -80,7 +73,8 @@ const CafeMap = (props) => {
       />
     </div>
   );
-  //test of info card
+  //info card
+
   const InfoCard = ({
     url,
     name,
@@ -94,36 +88,36 @@ const CafeMap = (props) => {
     <div
       style={{
         width: "400px",
-        height: "600px",
+        height: "700px",
         padding: "20px",
         backgroundColor: "gray",
         // border-radius :"5%"
       }}
     >
-      <img
-        style={{ height: "auto", width: "100%" }}
-        src={url}
-        alt="piyan"
-      ></img>
-      <p>店名 : {name}</p>
-      <p>電話 : {tele}</p>
-      <p>Google評價 : {rating} 顆星</p>
-      <p>{isOpen}</p>
-      <p>最新評論 : </p>
-      <ul>
-        <p>{comment_1}</p>
-        <p>{comment_2}</p>
-        <p>{comment_3}</p>
-      </ul>
+      <div className="cafePictureContainer">
+        <img className="cafePicture" src={url} alt="piyan"></img>
+      </div>
+      {/* <Divider orientation="middle">店家資訊</Divider> */}
+      <List
+        dataSource={[name, tele, rating]}
+        renderItem={(item) => <List.Item>{item}</List.Item>}
+      ></List>
+
+      <Divider orientation="middle">評論</Divider>
+      <List
+        dataSource={[comment_1, comment_2, comment_3]}
+        renderItem={(item) => <List.Item>{item}</List.Item>}
+      ></List>
       <div>
         <Form onFinish={commentSubmit} id="commentForm">
-          <label htmlFor="comment"> Write your comment here! </label>
+          {/* <label htmlFor="comment"> Write your comment here! </label> */}
           <br />
           <input
             type="text"
             id="comment"
             value={comment}
-            onChange={(e)=>handleCommentChange(e)}
+            onChange={(e) => handleCommentChange(e)}
+            placeholder="Write your comment here!"
             autoFocus
           ></input>
           <br />
@@ -137,8 +131,8 @@ const CafeMap = (props) => {
   );
 
   const handleCommentChange = (e) => {
-    setComment(e.target.value)
-  }
+    setComment(e.target.value);
+  };
 
   //handling map
   const handleCenterChange = () => {
@@ -150,8 +144,6 @@ const CafeMap = (props) => {
       });
     }
   };
-
-  //set comment
 
   //get current location
   const getLocation = () => {
@@ -263,13 +255,9 @@ const CafeMap = (props) => {
             },
           });
 
-          const comment1 = comments.comments[0];
-          const comment2 = comments.comments[1];
-          const comment3 = comments.comments[2];
+          console.log(comments.comments);
 
-          console.log(comments);
-
-          if (comment1 === null) {
+          if (comments.comments[0] === undefined) {
             setinfoCardDetail({
               name: tmpinfo.name,
               rating: tmpinfo.rating,
@@ -277,11 +265,15 @@ const CafeMap = (props) => {
               address: tmpinfo.formatted_address,
               isOpen: tmpinfo.isOpen,
               url: tmpinfo.url,
-              comment_1: "現在無留言",
-              comment_2: "",
-              comment_3: "",
+              comment_1: "目前暫無評論",
+              comment_2: "目前暫無評論",
+              comment_3: "目前暫無評論",
             });
+            console.log("就沒有東西");
           } else {
+            const comment1 = comments.comments[0];
+            const comment2 = comments.comments[1];
+            const comment3 = comments.comments[2];
             setinfoCardDetail({
               name: tmpinfo.name,
               rating: tmpinfo.rating,
@@ -295,6 +287,7 @@ const CafeMap = (props) => {
             });
           }
           // console.log(tmpinfo);
+          setStart(true);
         }
       });
     }
@@ -325,13 +318,34 @@ const CafeMap = (props) => {
     });
     console.log(cafeName);
     console.log(comments);
-
-    setinfoCardDetail({
-      ...infoCardDetail,
-      comment_1: comments.comments[0],
-      comment_2: comments.comments[1],
-      comment_3: comments.comments[2],
-    });
+    if (
+      comments.comments[2] === undefined &&
+      comments.comments[3] === undefined
+    ) {
+      setinfoCardDetail({
+        ...infoCardDetail,
+        comment_1: comments.comments[0],
+        comment_2: "目前暫無評論",
+        comment_3: "目前暫無評論",
+      });
+    } else if (
+      comments.comments[2] !== undefined &&
+      comments.comments[3] === undefined
+    ) {
+      setinfoCardDetail({
+        ...infoCardDetail,
+        comment_1: comments.comments[0],
+        comment_2: comments.comments[1],
+        comment_3: "目前暫無評論",
+      });
+    } else {
+      setinfoCardDetail({
+        ...infoCardDetail,
+        comment_1: comments.comments[0],
+        comment_2: comments.comments[1],
+        comment_3: comments.comments[2],
+      });
+    }
   };
 
   const onClick = ({ key }) => {
@@ -349,16 +363,17 @@ const CafeMap = (props) => {
   return (
     // Important! Always set the container height explicitly
     <>
-      <header className="piyan">
+      <header className="mapHeader">
+        咖啡廳到底在哪R
         <Space>
-          <Dropdown overlay={menu}>
-            <Button>屁眼</Button>
+          <Dropdown overlay={menu} style={{ margin: "auto" }}>
+            <Button>Select distance!</Button>
           </Dropdown>
         </Space>
       </header>
       <div
         style={{
-          height: "600px",
+          height: "700px",
           width: "70%",
           display: "flex",
           justifyContent: "center",
@@ -399,18 +414,21 @@ const CafeMap = (props) => {
             />
           ))}
         </GoogleMapReact>
-
-        <InfoCard
-          url={infoCardDetail.url}
-          name={infoCardDetail.name}
-          rating={infoCardDetail.rating}
-          tele={infoCardDetail.tele}
-          address={infoCardDetail.address}
-          isOpen={infoCardDetail.isOpen}
-          comment_1={infoCardDetail.comment_1}
-          comment_2={infoCardDetail.comment_2}
-          comment_3={infoCardDetail.comment_3}
-        />
+        {start ? (
+          <InfoCard
+            url={infoCardDetail.url}
+            name={infoCardDetail.name}
+            rating={infoCardDetail.rating}
+            tele={infoCardDetail.tele}
+            address={infoCardDetail.address}
+            isOpen={infoCardDetail.isOpen}
+            comment_1={infoCardDetail.comment_1}
+            comment_2={infoCardDetail.comment_2}
+            comment_3={infoCardDetail.comment_3}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
@@ -419,7 +437,7 @@ const CafeMap = (props) => {
 //set props
 CafeMap.defaultProps = {
   center: { lat: 0, lng: 0 },
-  zoom: 18,
+  zoom: 15,
 };
 
 export default CafeMap;
