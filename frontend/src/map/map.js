@@ -2,7 +2,18 @@ import { React, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Input, Form, message, Card } from "antd";
+import {
+  Button,
+  Space,
+  Input,
+  Form,
+  message,
+  Card,
+  Menu,
+  Dropdown,
+} from "antd";
+import { DownOutlined } from "@ant-design/icons";
+
 import GoogleCalender from "../calendar/Calendar";
 
 // Map
@@ -114,7 +125,10 @@ const CafeMap = (props) => {
             autoFocus
           ></input>
           <br />
-          <Button form="commentForm" key="submit" htmlType="submit"> 送出留言 </Button>
+          <Button form="commentForm" key="submit" htmlType="submit">
+            {" "}
+            送出留言{" "}
+          </Button>
         </Form>
       </div>
     </div>
@@ -130,7 +144,6 @@ const CafeMap = (props) => {
       });
     }
   };
-
 
   //set comment
 
@@ -226,14 +239,15 @@ const CafeMap = (props) => {
             tmpinfo.url = results.photos[0].getUrl();
           }
           const cafeName = tmpinfo.name;
-          await axios.post("/api/get-cafe-name", { cafeName })
+          await axios
+            .post("/api/get-cafe-name", { cafeName })
             .then((response) => {
-              console.log(response)
+              console.log(response);
             })
             .catch((error) => {
-              console.log(error)
-            })
-          
+              console.log(error);
+            });
+
           console.log(results);
           // // having bug here
           const { data: comments } = await axios.get("/api/get-comments", {
@@ -242,11 +256,11 @@ const CafeMap = (props) => {
             },
           });
           console.log("屁眼");
-          console.log(comments)
+          console.log(comments);
           const comment1 = comments.comments[0];
           const comment2 = comments.comments[1];
 
-          console.log(comment1)
+          console.log(comment1);
 
           // console.log(tmpinfo);
           setinfoCardDetail({
@@ -265,7 +279,7 @@ const CafeMap = (props) => {
   };
 
   const commentSubmit = async (e) => {
-    console.log("送出留言屁眼")
+    console.log("送出留言屁眼");
     // e.preventDefault();
     // setComment(e.target.value);
     // console.log(e.target.value);
@@ -275,36 +289,27 @@ const CafeMap = (props) => {
     await axios.post("/api/create-comment", { cafeNameForComment, comment });
   };
 
+  const onClick = ({ key }) => {
+    setInputRadius(key);
+    findCafeLocation();
+  };
+  const menu = (
+    <Menu onClick={onClick}>
+      <Menu.Item key="1000">Find Cafe in 1km</Menu.Item>
+      <Menu.Item key="2000">Find Cafe in 2km</Menu.Item>
+      <Menu.Item key="5000">Find Cafe in 5km</Menu.Item>
+    </Menu>
+  );
+
   return (
     // Important! Always set the container height explicitly
     <>
       <header className="piyan">
-        <Space></Space>
-        <Button
-          type="primary"
-          onClick={findCafeLocation}
-          style={{
-            margin: "auto",
-            display: "flex",
-            height: "auto",
-            width: "100px",
-          }}
-        >
-          Find Cafe!
-        </Button>
-        <div>
-          <Input
-            style={{
-              margin: "auto",
-              display: "flex",
-              height: "auto",
-              width: "100px",
-            }}
-            value={inputRadius}
-            placeholder="請輸入距離"
-            onChange={(e) => setInputRadius(e.target.value)}
-          ></Input>
-        </div>
+        <Space>
+          <Dropdown overlay={menu}>
+            <Button>屁眼</Button>
+          </Dropdown>
+        </Space>
       </header>
       <div
         style={{
