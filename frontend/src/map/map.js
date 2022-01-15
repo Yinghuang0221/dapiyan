@@ -23,12 +23,12 @@ const CafeMap = (props) => {
   const [mapApi, setMapApi] = useState(null);
   const [places, setPlaces] = useState([]);
   const [infoCardDetail, setinfoCardDetail] = useState({
-    name: "piyan",
-    rating: "piyan",
-    tele: "piyan",
-    address: "piyan",
+    name: "開始尋找吧!",
+    rating: "no rating",
+    tele: "no tele",
+    address: "no address",
     isOpen: false,
-    url: "piyan",
+    url: "https://upssmile.com/wp-content/uploads/2020/08/20200827-IMG_7609-1.jpg",
     comment_1: "目前無評論",
     comment_2: "",
   });
@@ -57,17 +57,6 @@ const CafeMap = (props) => {
           alt={"piyan"}
         />
       </button>
-      <Card
-        size="small"
-        style={{
-          width: "150px",
-          backgroundColor: "gray",
-          borderRadius: "5px",
-          fontSize: "10",
-        }}
-      >
-        {text}
-      </Card>
     </div>
   );
   //define selfmarker
@@ -107,7 +96,7 @@ const CafeMap = (props) => {
       ></img>
       <p>店名 : {name}</p>
       <p>電話 : {tele}</p>
-      <p>Google評價 : {rating} 顆星</p>
+      <p>Google評價 : {rating}</p>
       <p>{isOpen}</p>
       <p>最新評論 : </p>
       <ul>
@@ -346,10 +335,11 @@ const CafeMap = (props) => {
     // Important! Always set the container height explicitly
     <>
       <header className="piyan">
-        <Space>
+        <Space direction="vertical">
           <Dropdown overlay={menu}>
-            <Button>屁眼</Button>
+            <Button>Choose Distance</Button>
           </Dropdown>
+          <Button onClick={() => window.location.reload()}>Log Out</Button>
         </Space>
       </header>
       <div
