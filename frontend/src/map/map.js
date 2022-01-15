@@ -2,8 +2,9 @@ import { React, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Input, message } from "antd";
+import { Button, Space, Input, message } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
+import "antd/dist/antd.css";
 
 // Map
 const CafeMap = (props) => {
@@ -15,7 +16,7 @@ const CafeMap = (props) => {
     name: "piyan",
     rating: "piyan",
     tele: "piyan",
-    address: "piyan",
+    address: "piyan", 
     isOpen: false,
     url: "piyan",
   });
@@ -190,7 +191,7 @@ const CafeMap = (props) => {
             photos: "No photos",
           };
           const cafeName = results.name;
-          axios.post("/api/get-cafe-name", { cafeName });
+          await axios.post("/api/get-cafe-name", { cafeName });
           console.log(results);
           // having bug here
           // const { data: comments } = await axios.get("/api/get-comments", {
