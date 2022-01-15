@@ -89,6 +89,10 @@ router.post("/create-comment", async (req, res, next) => {
     // console.log(cafeNameForComment)
 
     await updateCafeComment(cafeNameForComment, comment);
+    const response = "comment saved."
+    console.log(response)
+    res.send(response)
+
   } catch (error) {}
 });
 
@@ -96,7 +100,7 @@ router.get("/get-comments", async (req, res, next) => {
   const name = req.query.name;
 
   const target = await searchComment(name);
-  console.log(target);
+  // console.log(target);
 
   res.send({ comments: target });
 });

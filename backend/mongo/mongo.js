@@ -52,12 +52,9 @@ const searchComment = async (name) => {
   let comments = [];
   if (existing) {
     try {
-      const comment1 = existing.comments[0];
-      const comment2 = existing.comments[1];
-      const comment3 = existing.comments[2];
       // console.log(comment1, comment2, comment3);
 
-      comments = [comment1, comment2, comment3];
+      comments = existing.comments;
       return comments;
     } catch (error) {
       // console.log(error);
