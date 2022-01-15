@@ -131,17 +131,7 @@ const CafeMap = (props) => {
     }
   };
 
-  const CommentInput = () => (
-    <div>
-      <input
-        type="text"
-        id="comment"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        autoFocus
-      ></input>
-    </div>
-  );
+
   //set comment
 
   //get current location
