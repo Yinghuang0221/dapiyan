@@ -31,7 +31,7 @@ const SaveCafeName = async (name) => {
 const updateCafeComment = async (name, comment) => {
   const existing = await Cafes.findOne({ name });
   if (existing) {
-    // console.log("Cafe is already existing1")
+    console.log("Cafe is already existing1")
     await Cafes.updateOne(
       { name },
       {
@@ -48,19 +48,19 @@ const updateCafeComment = async (name, comment) => {
 
 const searchComment = async (name) => {
   const existing = await Cafes.findOne({ name });
-  console.log(existing);
+  // console.log(existing);
   let comments = [];
   if (existing) {
     try {
       const comment1 = existing.comments[0];
       const comment2 = existing.comments[1];
       const comment3 = existing.comments[2];
-      console.log(comment1, comment2, comment3);
+      // console.log(comment1, comment2, comment3);
 
       comments = [comment1, comment2, comment3];
       return comments;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 };

@@ -4,7 +4,7 @@ import GoogleMapReact from "google-map-react";
 import axios from "../api";
 import { Button, Space, Input, message } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
-import "antd/dist/antd.css";
+
 
 // Map
 const CafeMap = (props) => {
@@ -68,7 +68,7 @@ const CafeMap = (props) => {
     </div>
   );
   //test of info card
-  const InfoCard = ({ url, name, rating, tele, isOpen, comment, onChange }) => (
+  const InfoCard = ({ url, name, rating, tele, isOpen, comment }) => (
     <div
       style={{
         width: "400px",
@@ -91,12 +91,7 @@ const CafeMap = (props) => {
         <form onSubmit={commentSubmit}>
           <label htmlFor="comment"> Write your comment here! </label>
           <br />
-          <input
-            type="text"
-            id="comment"
-            value={comment}
-            onChange={onChange}
-          ></input>
+          <CommentInput />
           <br />
           <button type="submit"> 送出留言 </button>
         </form>
@@ -115,11 +110,21 @@ const CafeMap = (props) => {
     }
   };
 
+  
+
+  const CommentInput = ()=> (
+    <div>
+    <input
+    type="text"
+    id="comment"
+    value={comment}
+    onChange={(e) => setComment(e.target.value)}
+    autoFocus
+    ></input>
+    </div>
+    )
   //set comment
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
-    console.log(e.target.value);
-  };
+
 
   //get current location
   const getLocation = () => {
@@ -177,10 +182,10 @@ const CafeMap = (props) => {
           "formatted_address",
           "opening_hours",
           "photos",
-        ],
+        ], 
       };
 
-      service.getDetails(request, async (results, status) => {
+      service.getDetails(request, async(results, status) => {
         if (status === mapApi.places.PlacesServiceStatus.OK) {
           let tmpinfo = {
             name: "No name",
@@ -190,15 +195,7 @@ const CafeMap = (props) => {
             isOpen: "No open info",
             photos: "No photos",
           };
-          const cafeName = results.name;
-          await axios.post("/api/get-cafe-name", { cafeName });
-          console.log(results);
-          // having bug here
-          // const { data: comments } = await axios.get("/api/get-comments", {
-          //   params: {
-          //     name: cafeName,
-          //   },
-          // });
+
           if (results.name !== undefined) {
             tmpinfo.name = results.name;
           }
@@ -220,6 +217,16 @@ const CafeMap = (props) => {
           if (results.photos !== undefined) {
             tmpinfo.url = results.photos[0].getUrl();
           }
+          const cafeName = tmpinfo.name;
+          axios.post("/api/get-cafe-name", { cafeName });
+          // console.log(results);
+          // // having bug here
+          const { data: comments } = await axios.get("/api/get-comments", {
+            params: {
+              name: cafeName,
+            },
+          });
+          console.log(comments)
           // console.log(tmpinfo);
           setinfoCardDetail({
             name: tmpinfo.name,
@@ -234,14 +241,14 @@ const CafeMap = (props) => {
     }
   };
 
-  const commentSubmit = (e) => {
+  const commentSubmit = async(e) => {
     e.preventDefault();
     // setComment(e.target.value);
     // console.log(e.target.value);
 
     const cafeNameForComment = infoCardDetail.name;
     console.log(cafeNameForComment);
-    axios.post("/api/create-comment", { cafeNameForComment, comment });
+    await axios.post("/api/create-comment", { cafeNameForComment, comment });
   };
 
   return (
@@ -320,8 +327,10 @@ const CafeMap = (props) => {
           address={infoCardDetail.address}
           isOpen={infoCardDetail.isOpen}
           comment={comment}
-          onChange={handleCommentChange}
-        />
+        /> 
+
+
+
       </div>
     </>
   );

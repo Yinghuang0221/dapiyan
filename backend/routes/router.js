@@ -73,7 +73,7 @@ router.post("/create-event", async (req, res, next) => {
 router.post("/get-cafe-name", async (req, res, next) => {
   try {
     const { cafeName } = req.body;
-
+    // console.log(cafeName)
     await SaveCafeName(cafeName);
   } catch (error) {
     next(error);

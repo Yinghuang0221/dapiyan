@@ -2,6 +2,7 @@
 import "./App.css";
 import Calender from "./calendar/Calendar";
 import CafeMap from "./map/map";
+import 'antd/dist/antd.min.css';
 
 function App() {
   return (
