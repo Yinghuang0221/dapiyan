@@ -3,13 +3,26 @@ import "./App.css";
 import Calender from "./calendar/Calendar";
 import CafeMap from "./map/map";
 import 'antd/dist/antd.min.css';
+import { useState } from "react";
+import HomePage from "./homepage/HomePage";
 
-function App() {
+const App = () => {
+
+  const [signedIn, setSignedIn] = useState(false)
+  
+  const handleSignIn = () => {
+    setSignedIn(true)
+  }
+
   return (
-    <div style={{ display: "flex" }}>
-      <Calender></Calender>
+
+    <>
+    {!signedIn ? (<HomePage handleSignIn = {handleSignIn}/>) : (
+      <div style={{ display: "flex" }}>
       <CafeMap />
-    </div>
+    </div>)}
+
+    </>
   );
 }
 

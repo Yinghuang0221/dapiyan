@@ -2,9 +2,9 @@ import { React, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import { Button, Space, Input, message } from 'antd';
+import { Button, Space, Input, message, Calendar } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
-
+import GoogleCalender from "../calendar/Calendar";
 
 // Map
 const CafeMap = (props) => {
@@ -19,6 +19,8 @@ const CafeMap = (props) => {
     address: "piyan", 
     isOpen: false,
     url: "piyan",
+    comment_1:"目前無評論",
+    comment_2:"",
   });
   const [comment, setComment] = useState("");
   const [inputRadius, setInputRadius] = useState(1000);
@@ -68,7 +70,7 @@ const CafeMap = (props) => {
     </div>
   );
   //test of info card
-  const InfoCard = ({ url, name, rating, tele, isOpen, comment }) => (
+  const InfoCard = ({ url, name, rating, tele, isOpen, comment_1, comment_2 }) => (
     <div
       style={{
         width: "400px",
@@ -87,6 +89,11 @@ const CafeMap = (props) => {
       <p>電話 : {tele}</p>
       <p>Google評價 : {rating} 顆星</p>
       <p>{isOpen}</p>
+      <p>最新評論：</p>
+      <ul>
+        <li>{comment_1}</li>
+        <li>{comment_2}</li>
+      </ul>
       <div>
         <form onSubmit={commentSubmit}>
           <label htmlFor="comment"> Write your comment here! </label>
@@ -110,7 +117,7 @@ const CafeMap = (props) => {
     }
   };
 
-  
+
 
   const CommentInput = ()=> (
     <div>
@@ -226,7 +233,12 @@ const CafeMap = (props) => {
               name: cafeName,
             },
           });
-          console.log(comments)
+          
+          const comment1 = comments.comments[0]
+          const comment2 = comments.comments[1]
+          
+          // console.log(comment1)
+
           // console.log(tmpinfo);
           setinfoCardDetail({
             name: tmpinfo.name,
@@ -235,6 +247,8 @@ const CafeMap = (props) => {
             address: tmpinfo.formatted_address,
             isOpen: tmpinfo.isOpen,
             url: tmpinfo.url,
+            comment_1: comment1,
+            comment_2: comment2,
           });
         }
       });
@@ -247,13 +261,14 @@ const CafeMap = (props) => {
     // console.log(e.target.value);
 
     const cafeNameForComment = infoCardDetail.name;
-    console.log(cafeNameForComment);
+    // console.log(cafeNameForComment);
     await axios.post("/api/create-comment", { cafeNameForComment, comment });
   };
 
   return (
     // Important! Always set the container height explicitly
     <>
+      <GoogleCalender cafeName = {infoCardDetail.name} />
       <div className="piyan">
         <Space>
           <Button
@@ -326,7 +341,8 @@ const CafeMap = (props) => {
           tele={infoCardDetail.tele}
           address={infoCardDetail.address}
           isOpen={infoCardDetail.isOpen}
-          comment={comment}
+          comment_1={infoCardDetail.comment_1}
+          comment_2={infoCardDetail.comment_2}
         /> 
 
 
