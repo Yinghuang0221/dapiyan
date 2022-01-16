@@ -131,13 +131,8 @@ const CafeMap = (props) => {
   // find cafe
   const findCafeLocation = () => {
     if (isNaN(inputRadius) === false) {
-      // if (mapApiLoaded) {
-      //   setMyPosition({
-      //     //default position at center
-      //     lat: mapInstance.center.lat(),
-      //     lng: mapInstance.center.lng(),
-      //   });
-      // }
+      console.log({ searched: searched, placeChanged: placeChanged });
+
       console.log(inputRadius);
       if (mapApiLoaded) {
         const service = new mapApi.places.PlacesService(mapInstance);
@@ -367,8 +362,13 @@ const CafeMap = (props) => {
   };
 
   const onClick = ({ key }) => {
+    let tmp = searched;
+    console.log(key);
+    if (key !== inputRadius) {
+      tmp = false;
+    }
     setInputRadius(key);
-    if (placeChanged === true && searched === true && placeChangedTimes !== 1) {
+    if (placeChanged === true && tmp === true && placeChangedTimes !== 1) {
       console.log("onclick");
       findCafeLocation();
     }
@@ -378,8 +378,11 @@ const CafeMap = (props) => {
   useEffect(() => {
     radiusRef.current = inputRadius;
     console.log("Effect");
-    if (searched && !placeChanged) findCafeLocation();
-    setSearched(true);
+    if (searched && !placeChanged) {
+      findCafeLocation();
+      setSearched(true);
+      console.log({ searched: searched, placeChanged: placeChanged });
+    }
   }, [inputRadius]);
 
   const menu = (
