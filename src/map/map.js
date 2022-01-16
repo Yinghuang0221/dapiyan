@@ -366,20 +366,28 @@ const CafeMap = (props) => {
     setComment("");
   };
 
-  const onClick = ({ key }) => {
-    setInputRadius(key);
-    if (placeChanged === true && searched === true && placeChangedTimes !== 1) {
-      console.log("onclick");
-      findCafeLocation();
-    }
-    setPlaceChanged(false);
-    setSearched(true);
-  };
-  useEffect(() => {
-    radiusRef.current = inputRadius;
-    console.log("Effect");
-    if (searched && !placeChanged) findCafeLocation();
-    setSearched(true);
+  const onClick = ({ key }) => {	
+    let tmp = searched;	
+    console.log(key);	
+    if (key !== inputRadius) {	
+      tmp = false;	
+    }	
+    setInputRadius(key);	
+    if (placeChanged === true && tmp === true && placeChangedTimes !== 1) {	
+      console.log("onclick");	
+      findCafeLocation();	
+    }	
+    setPlaceChanged(false);	
+    setSearched(true);	
+  };	
+  useEffect(() => {	
+    radiusRef.current = inputRadius;	
+    console.log("Effect");	
+    if (searched && !placeChanged) {	
+      findCafeLocation();	
+      setSearched(true);	
+      console.log({ searched: searched, placeChanged: placeChanged });	
+    }	
   }, [inputRadius]);
 
   const menu = (
