@@ -23,7 +23,7 @@ const CafeMap = (props) => {
     comment_2: "目前無評論",
     comment_3: "目前無評論",
   });
-  const [placeChanged, setPlaceChanged] = useState(false);
+  const [placeChanged, setPlaceChanged] = useState(true);
   const [comment, setComment] = useState("");
   const [start, setStart] = useState(false);
   const [inputRadius, setInputRadius] = useState(1000);
