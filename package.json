@@ -24,6 +24,7 @@
     "dotenv-defaults": "^3.0.0",
     "express": "^4.17.2",
     "google-map-react": "^2.1.10",
+    "mini-css-extract-plugin": "2.4.5",
     "mongoose": "^6.1.6",
     "morgan": "^1.10.0",
     "react": "^17.0.2",
@@ -55,5 +56,4 @@
       "last 1 safari version"
     ]
   }
-
 }
