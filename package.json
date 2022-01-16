@@ -63,5 +63,8 @@
       "react/jsx-dev-runtime": "react/jsx-dev-runtime.js",
       "react/jsx-runtime": "react/jsx-runtime.js"
     }
+  },
+  "overrides": {
+    "mini-css-extract-plugin": "2.4.5"
   }
 }
