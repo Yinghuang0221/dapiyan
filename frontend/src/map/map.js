@@ -1,20 +1,8 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useRef, useState } from "react";
 import Key from "../key"; // API key
 import GoogleMapReact from "google-map-react";
 import axios from "../api";
-import {
-  Button,
-  Space,
-  Input,
-  Form,
-  message,
-  Card,
-  Menu,
-  Dropdown,
-  List,
-  Typography,
-  Divider,
-} from "antd";
+import { Button, Input, message, Menu, Dropdown, List } from "antd";
 
 import GoogleCalender from "../calendar/Calendar";
 
@@ -35,9 +23,12 @@ const CafeMap = (props) => {
     comment_2: "目前無評論",
     comment_3: "目前無評論",
   });
+  const [placeChanged, setPlaceChanged] = useState(false);
   const [comment, setComment] = useState("");
   const [start, setStart] = useState(false);
   const [inputRadius, setInputRadius] = useState(1000);
+  const radiusRef = useRef();
+  const [searched, setSearched] = useState(false);
   const [myPosition, setMyPosition] = useState({
     lat: 25.2,
     lng: 121.31,
@@ -52,7 +43,7 @@ const CafeMap = (props) => {
   };
 
   //define Cafemarker
-  const CafeMarker = ({ icon, text, name, id }) => (
+  const CafeMarker = ({ icon, id }) => (
     <div>
       <button type="button" onClick={() => getLocationDetail(id)}>
         <img
@@ -85,48 +76,24 @@ const CafeMap = (props) => {
     comment_2,
     comment_3,
   }) => (
-    <div
-      style={{
-        width: "400px",
-        height: "700px",
-        padding: "20px",
-        backgroundColor: "gray",
-        // border-radius :"5%"
-      }}
-    >
+    <div>
       <div className="cafePictureContainer">
         <img className="cafePicture" src={url} alt="piyan"></img>
       </div>
-      {/* <Divider orientation="middle">店家資訊</Divider> */}
       <List
-        dataSource={[name, tele, rating]}
+        dataSource={[
+          "店名 : " + name,
+          "電話 : " + tele,
+          "Google評價 : " + rating,
+          isOpen,
+        ]}
         renderItem={(item) => <List.Item>{item}</List.Item>}
       ></List>
-
-      <Divider orientation="middle">評論</Divider>
       <List
+        header={<div>最新評論</div>}
         dataSource={[comment_1, comment_2, comment_3]}
         renderItem={(item) => <List.Item>{item}</List.Item>}
       ></List>
-      <div>
-        <Form onFinish={commentSubmit} id="commentForm">
-          {/* <label htmlFor="comment"> Write your comment here! </label> */}
-          <br />
-          <input
-            type="text"
-            id="comment"
-            value={comment}
-            onChange={(e) => handleCommentChange(e)}
-            placeholder="Write your comment here!"
-            autoFocus
-          ></input>
-          <br />
-          <Button form="commentForm" key="submit" htmlType="submit">
-            {" "}
-            送出留言{" "}
-          </Button>
-        </Form>
-      </div>
     </div>
   );
 
@@ -142,6 +109,8 @@ const CafeMap = (props) => {
         lat: mapInstance.center.lat(),
         lng: mapInstance.center.lng(),
       });
+      setPlaceChanged(true);
+      console.log("Change position");
     }
   };
 
@@ -160,20 +129,20 @@ const CafeMap = (props) => {
   // find cafe
   const findCafeLocation = () => {
     if (isNaN(inputRadius) === false) {
-      if (mapApiLoaded) {
-        setMyPosition({
-          //default position at center
-          lat: mapInstance.center.lat(),
-          lng: mapInstance.center.lng(),
-        });
-      }
+      // if (mapApiLoaded) {
+      //   setMyPosition({
+      //     //default position at center
+      //     lat: mapInstance.center.lat(),
+      //     lng: mapInstance.center.lng(),
+      //   });
+      // }
       console.log(inputRadius);
       if (mapApiLoaded) {
         const service = new mapApi.places.PlacesService(mapInstance);
 
         const request = {
           location: myPosition,
-          radius: inputRadius,
+          radius: radiusRef.current,
           type: ["cafe"],
         };
 
@@ -181,6 +150,9 @@ const CafeMap = (props) => {
           if (status === mapApi.places.PlacesServiceStatus.OK) {
             console.log(results);
             setPlaces(results);
+            message.info("成功搜尋");
+          } else {
+            message.info("附近沒有咖啡廳");
           }
         });
       }
@@ -212,7 +184,7 @@ const CafeMap = (props) => {
             formatted_phone_number: "No phone number",
             formatted_address: "No address",
             isOpen: "No open info",
-            photos: "No photos",
+            url: "https://i.stack.imgur.com/6M513.png",
           };
 
           if (results.name !== undefined) {
@@ -270,10 +242,47 @@ const CafeMap = (props) => {
               comment_3: "目前暫無評論",
             });
             console.log("就沒有東西");
+          } else if (
+            comments.comments[0] !== undefined &&
+            comments.comments[1] === undefined &&
+            comments.comments[2] === undefined
+          ) {
+            const comment1 = comments.comments[0];
+            setinfoCardDetail({
+              name: tmpinfo.name,
+              rating: tmpinfo.rating,
+              tele: tmpinfo.formatted_phone_number,
+              address: tmpinfo.formatted_address,
+              isOpen: tmpinfo.isOpen,
+              url: tmpinfo.url,
+              comment_1: comment1,
+              comment_2: "目前暫無評論",
+              comment_3: "目前暫無評論",
+            });
+          } else if (
+            comments.comments[0] !== undefined &&
+            comments.comments[1] !== undefined &&
+            comments.comments[2] === undefined
+          ) {
+            const comment1 = comments.comments[0];
+            const comment2 = comments.comments[1];
+
+            setinfoCardDetail({
+              name: tmpinfo.name,
+              rating: tmpinfo.rating,
+              tele: tmpinfo.formatted_phone_number,
+              address: tmpinfo.formatted_address,
+              isOpen: tmpinfo.isOpen,
+              url: tmpinfo.url,
+              comment_1: comment1,
+              comment_2: comment2,
+              comment_3: "目前暫無評論",
+            });
           } else {
             const comment1 = comments.comments[0];
             const comment2 = comments.comments[1];
             const comment3 = comments.comments[2];
+
             setinfoCardDetail({
               name: tmpinfo.name,
               rating: tmpinfo.rating,
@@ -298,60 +307,79 @@ const CafeMap = (props) => {
     // e.preventDefault();
     // setComment(e.target.value);
     // console.log(e.target.value) ;
-
-    const cafeNameForComment = infoCardDetail.name;
-    // console.log(cafeNameForComment);
-    await axios
-      .post("/api/create-comment", { cafeNameForComment, comment })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    const cafeName = infoCardDetail.name;
-    const { data: comments } = await axios.get("/api/get-comments", {
-      params: {
-        name: cafeName,
-      },
-    });
-    console.log(cafeName);
-    console.log(comments);
-    if (
-      comments.comments[2] === undefined &&
-      comments.comments[3] === undefined
-    ) {
-      setinfoCardDetail({
-        ...infoCardDetail,
-        comment_1: comments.comments[0],
-        comment_2: "目前暫無評論",
-        comment_3: "目前暫無評論",
-      });
-    } else if (
-      comments.comments[2] !== undefined &&
-      comments.comments[3] === undefined
-    ) {
-      setinfoCardDetail({
-        ...infoCardDetail,
-        comment_1: comments.comments[0],
-        comment_2: comments.comments[1],
-        comment_3: "目前暫無評論",
-      });
+    if (comment.trim() === "") {
+      message.warn("請輸入評論");
     } else {
-      setinfoCardDetail({
-        ...infoCardDetail,
-        comment_1: comments.comments[0],
-        comment_2: comments.comments[1],
-        comment_3: comments.comments[2],
+      const cafeNameForComment = infoCardDetail.name;
+      // console.log(cafeNameForComment);
+      await axios
+        .post("/api/create-comment", { cafeNameForComment, comment })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      const cafeName = infoCardDetail.name;
+      const { data: comments } = await axios.get("/api/get-comments", {
+        params: {
+          name: cafeName,
+        },
       });
+      console.log(cafeName);
+      console.log(comments);
+      if (
+        comments.comments[1] === undefined &&
+        comments.comments[2] === undefined
+      ) {
+        setinfoCardDetail({
+          ...infoCardDetail,
+          comment_1: comments.comments[0],
+          comment_2: "目前暫無評論",
+          comment_3: "目前暫無評論",
+        });
+        console.log("只有一個評論");
+      } else if (
+        comments.comments[1] !== undefined &&
+        comments.comments[2] === undefined
+      ) {
+        setinfoCardDetail({
+          ...infoCardDetail,
+          comment_1: comments.comments[0],
+          comment_2: comments.comments[1],
+          comment_3: "目前暫無評論",
+        });
+        console.log("只有兩個評論");
+      } else {
+        setinfoCardDetail({
+          ...infoCardDetail,
+          comment_1: comments.comments[0],
+          comment_2: comments.comments[1],
+          comment_3: comments.comments[2],
+        });
+        console.log("有大於等於三個評論");
+      }
     }
+    setComment("");
   };
 
   const onClick = ({ key }) => {
     setInputRadius(key);
-    findCafeLocation();
+    if (placeChanged === true && searched === true) {
+      console.log("onclick");
+      findCafeLocation();
+    }
+    setPlaceChanged(false);
+    setSearched(true);
   };
+  useEffect(() => {
+    radiusRef.current = inputRadius;
+    console.log("Effect");
+    if (searched && !placeChanged) findCafeLocation();
+    setSearched(true);
+  }, [inputRadius]);
+
   const menu = (
     <Menu onClick={onClick}>
       <Menu.Item key="1000">Find Cafe in 1km</Menu.Item>
@@ -360,21 +388,20 @@ const CafeMap = (props) => {
     </Menu>
   );
 
+  const { Search } = Input;
+
   return (
     // Important! Always set the container height explicitly
     <>
       <header className="mapHeader">
-        咖啡廳到底在哪R
-        <Space>
-          <Dropdown overlay={menu} style={{ margin: "auto" }}>
-            <Button>Select distance!</Button>
-          </Dropdown>
-        </Space>
+        <Dropdown overlay={menu} type="primary">
+          <Button>Select distance!</Button>
+        </Dropdown>
       </header>
       <div
         style={{
-          height: "700px",
-          width: "70%",
+          height: "650px",
+          width: "100%",
           display: "flex",
           justifyContent: "center",
           margin: "auto",
@@ -415,19 +442,47 @@ const CafeMap = (props) => {
           ))}
         </GoogleMapReact>
         {start ? (
-          <InfoCard
-            url={infoCardDetail.url}
-            name={infoCardDetail.name}
-            rating={infoCardDetail.rating}
-            tele={infoCardDetail.tele}
-            address={infoCardDetail.address}
-            isOpen={infoCardDetail.isOpen}
-            comment_1={infoCardDetail.comment_1}
-            comment_2={infoCardDetail.comment_2}
-            comment_3={infoCardDetail.comment_3}
-          />
+          <div
+            style={{
+              width: "400px",
+              height: "650px",
+              padding: "20px",
+              backgroundColor: "gray",
+              // border-radius :"5%"
+            }}
+          >
+            <InfoCard
+              url={infoCardDetail.url}
+              name={infoCardDetail.name}
+              rating={infoCardDetail.rating}
+              tele={infoCardDetail.tele}
+              address={infoCardDetail.address}
+              isOpen={infoCardDetail.isOpen}
+              comment_1={infoCardDetail.comment_1}
+              comment_2={infoCardDetail.comment_2}
+              comment_3={infoCardDetail.comment_3}
+            />
+
+            <Search
+              placeholder="輸入評論"
+              allowClear
+              enterButton="Send"
+              size="large"
+              value={comment}
+              onChange={(e) => handleCommentChange(e)}
+              onSearch={commentSubmit}
+            />
+          </div>
         ) : (
-          <></>
+          <div
+            style={{
+              width: "503px",
+              height: "700px",
+              padding: "20px",
+              backgroundColor: "gray",
+              // border-radius :"5%"
+            }}
+          ></div>
         )}
       </div>
     </>
