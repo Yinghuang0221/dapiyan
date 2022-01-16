@@ -312,6 +312,7 @@ const CafeMap = (props) => {
     if (comment.trim() === "") {
       message.warn("請輸入評論");
     } else {
+      message.info('輸入成功')
       const cafeNameForComment = infoCardDetail.name;
       // console.log(cafeNameForComment);
       await axios
