@@ -12,8 +12,8 @@ const GoogleCalender = (cafeName) => {
   const handleSubmit = (e) => {
     const location = cafeName.cafeName;
     if (
-      summary === "" ||
-      description === "" ||
+      summary.trim() === "" ||
+      description.trim() === "" ||
       startDateTime === "" ||
       endDateTime === "" ||
       location === "開始尋找吧!"

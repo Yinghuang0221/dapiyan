@@ -14,12 +14,12 @@ const CafeMap = (props) => {
   const [places, setPlaces] = useState([]);
   const [placeChangedTimes, setplaceChangedTimes] = useState(0);
   const [infoCardDetail, setinfoCardDetail] = useState({
-    name: "piyan",
-    rating: "piyan",
-    tele: "piyan",
-    address: "piyan",
+    name: "",
+    rating: "",
+    tele: "",
+    address: "",
     isOpen: false,
-    url: "piyan",
+    url: "",
     comment_1: "目前無評論",
     comment_2: "目前無評論",
     comment_3: "目前無評論",
@@ -50,7 +50,7 @@ const CafeMap = (props) => {
         <img
           style={{ height: "20px", width: "20px" }}
           src={icon}
-          alt={"piyan"}
+          alt={"aphoto"}
         />
       </button>
     </div>
@@ -60,7 +60,7 @@ const CafeMap = (props) => {
     <div style={{ width: "20px" }}>
       <img
         src="https://pic.baike.soso.com/ugc/baikepic2/4950/cut-20210830191832-1142169327_jpg_703_469_43543.jpg/800"
-        alt={"piyan"}
+        alt={"aphoto"}
         style={{ width: "50px" }}
       />
     </div>
