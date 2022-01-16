@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import Cafes from "../mongo/models/Cafes";
-import { SaveCafeName, updateCafeComment, searchComment } from "../mongo/mongo";
+import { SaveCafeName, updateCafeComment, searchComment } from "../mongo/mongo.js";
+import {google} from 'googleapis'
 
 const router = express.Router();
-const { google } = require("googleapis");
+
 
 const db = mongoose.connection;
 db.on("error", (err) => console.log(err));

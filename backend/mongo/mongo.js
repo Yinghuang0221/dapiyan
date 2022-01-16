@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv-defaults";
-import Cafes from "./models/Cafes";
+import Cafes from "./models/Cafes.js";
 
 dotenv.config();
 
