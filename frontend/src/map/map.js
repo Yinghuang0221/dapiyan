@@ -12,6 +12,7 @@ const CafeMap = (props) => {
   const [mapInstance, setMapInstance] = useState(null);
   const [mapApi, setMapApi] = useState(null);
   const [places, setPlaces] = useState([]);
+  const [placeChangedTimes, setplaceChangedTimes] = useState(0);
   const [infoCardDetail, setinfoCardDetail] = useState({
     name: "piyan",
     rating: "piyan",
@@ -110,6 +111,7 @@ const CafeMap = (props) => {
         lng: mapInstance.center.lng(),
       });
       setPlaceChanged(true);
+      setplaceChangedTimes(placeChangedTimes + 1);
       console.log("Change position");
     }
   };
@@ -366,7 +368,7 @@ const CafeMap = (props) => {
 
   const onClick = ({ key }) => {
     setInputRadius(key);
-    if (placeChanged === true && searched === true) {
+    if (placeChanged === true && searched === true && placeChangedTimes !== 1) {
       console.log("onclick");
       findCafeLocation();
     }
