@@ -68,8 +68,8 @@ const HomePage = ({ handleSignIn }) => {
             <Carousel   >
                 {items.map(item => {
                     return(
-                        <div className="container-fluid">
-                            <div className="content">
+                        <div key={item.key} className="container-fluid">
+                            <div  className="content">
                                 <h3>{item.title}</h3>
                                 <p>{item.content}</p>
                                 <GoogleLogin
